@@ -1,0 +1,17 @@
+{
+  "name": "flowboard",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "install": "npm install",
+    "start:api": "npm --prefix apps/api run start:dev",
+    "start:web": "npm --prefix apps/web run dev",
+    "start": "concurrently \"npm run start:api\" \"npm run start:web\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

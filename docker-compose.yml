@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: flowboard
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/flowboard}
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret}
+      PORT: 3333
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+    ports:
+      - '3333:3333'
+    depends_on:
+      - postgres
+    networks:
+      - flowboard-net
+
+  frontend:
+    build: ./frontend
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3333}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    networks:
+      - flowboard-net
+
+volumes:
+  pgdata:
+
+networks:
+  flowboard-net:
+    driver: bridge
